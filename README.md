@@ -26,7 +26,7 @@ npm install
 ## Run
 
 ```bash
-npm start
+npm start or npx expo start
 ```
 
 Then press `i` for iOS or `a` for Android.  
