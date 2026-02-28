@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Secured Todo",
+    "slug": "secured-todo-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.securedtodo.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#8b3ac1"
+      },
+      "package": "com.securedtodo.app"
+    },
+    "plugins": [
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Authenticate to access your TODO list."
+        }
+      ]
+    ],
+    "newArchEnabled": true,
+    "jsEngine": "hermes"
+  }
+}

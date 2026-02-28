@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+
+# iOS
+ios/
+*.xcworkspace
+*.xcuserdata
+*.xcuserstate
+DerivedData/
+
+# Android
+android/
+.gradle/
+local.properties
+*.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Build artifacts
+build/
+app-bundle/
+app-bundle-*.apk
+app-bundle-*.aab
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# Local env
+.env
+.env.local
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Jest
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
