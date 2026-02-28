@@ -11,19 +11,33 @@ import { TodoItem } from './TodoItem';
 import { useTodo } from '../context/TodoContext';
 import { useLocalAuth } from '../hooks/useLocalAuth';
 import { app, todoList } from '../utils/strings';
+import { theme } from '../shared/theme';
 import type { TodoItem as TodoItemType } from '../types/todo';
 
 const ITEM_HEIGHT = 56;
 
 /**
- * Main TODO list UI: input to add items, list of TodoItem.
- * Add/update/delete are gated: we run authenticate() first, then perform the action.
+ * TodoListComponent
+ * - Renders the main list UI: header, input row for adding items, and a FlatList
+ *   of `TodoItem` rows.
+ * - All modifications (add/toggle/update/delete) require local auth. Instead of
+ *   each child calling auth directly, the list provides `handleRequestAuth`
+ *   which invokes `authenticate()` and runs the provided action on success.
  */
 function TodoListComponent() {
+  // Access todo state and mutators from context
   const { items, addTodo, toggleTodo, updateTodo, deleteTodo } = useTodo();
+
+  // Local auth hook: `authenticate(prompt)` returns { success, error }
+  // `isChecking` indicates whether an auth attempt is in progress and is used
+  // to disable inputs while authenticating.
   const { authenticate, isChecking } = useLocalAuth();
+
+  // Controlled input state for creating a new todo
   const [newText, setNewText] = useState('');
 
+  // Wrapper used across actions to require auth before executing the mutation.
+  // The `action` callback is only invoked if authentication succeeds.
   const handleRequestAuth = useCallback(
     async (action: () => void) => {
       const result = await authenticate(todoList.authPromptModify);
@@ -34,6 +48,7 @@ function TodoListComponent() {
     [authenticate]
   );
 
+  // Add a new todo: trim input, require auth, then add and clear input.
   const handleAdd = useCallback(async () => {
     const trimmed = newText.trim();
     if (!trimmed) return;
@@ -43,6 +58,8 @@ function TodoListComponent() {
     });
   }, [newText, handleRequestAuth, addTodo]);
 
+  // Render each item by passing down the mutation callbacks and the
+  // `handleRequestAuth` wrapper so child rows can request auth for their actions.
   const renderItem = useCallback(
     ({ item }: { item: TodoItemType }) => (
       <TodoItem
@@ -58,6 +75,7 @@ function TodoListComponent() {
 
   const keyExtractor = useCallback((item: TodoItemType) => item.id, []);
 
+  // Optimize list layout by returning fixed-height item metadata to FlatList.
   const getItemLayout = useCallback(
     (_: unknown, index: number) => ({
       length: ITEM_HEIGHT,
@@ -67,6 +85,7 @@ function TodoListComponent() {
     []
   );
 
+  // Shown when the list has no items
   const listEmptyComponent = useMemo(
     () => <Text style={styles.empty}>{todoList.emptyList}</Text>,
     []
@@ -77,11 +96,12 @@ function TodoListComponent() {
       <Text style={styles.title}>{app.title}</Text>
       <Text style={styles.subtitle}>{todoList.subtitle}</Text>
 
+      {/* Input row: text entry and add button. Disabled while auth is running. */}
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
           placeholder={todoList.inputPlaceholder}
-          placeholderTextColor="rgba(255,255,255,0.5)"
+          placeholderTextColor={theme.colors.placeholder}
           value={newText}
           onChangeText={setNewText}
           editable={!isChecking}
@@ -96,6 +116,9 @@ function TodoListComponent() {
         </TouchableOpacity>
       </View>
 
+      {/* Main list: FlatList handles virtualization and performance. The
+          child `TodoItem` components receive `onRequestAuth` so they can
+          ask the parent to authenticate before mutating. */}
       <FlatList
         data={items}
         keyExtractor={keyExtractor}
@@ -116,38 +139,38 @@ export const TodoList = React.memo(TodoListComponent);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    paddingTop: 60,
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xl * 2,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 4,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
   },
   subtitle: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.8)',
-    marginBottom: 24,
+    color: theme.colors.textDim,
+    marginBottom: theme.spacing.xl,
   },
   inputRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.lg,
   },
   input: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    backgroundColor: theme.colors.surfaceLight,
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
     fontSize: 16,
-    color: '#fff',
+    color: theme.colors.text,
   },
   addButton: {
-    backgroundColor: '#bb28a1',
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    backgroundColor: theme.colors.primaryAccent,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     justifyContent: 'center',
   },
   addButtonDisabled: {
@@ -163,8 +186,8 @@ const styles = StyleSheet.create({
   },
   empty: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.7)',
+    color: theme.colors.textDim,
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: theme.spacing.lg * 2,
   },
 });

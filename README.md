@@ -16,11 +16,101 @@ A minimal **secured TODO list** app built with **Expo** and **expo-local-authent
 - npm, yarn, or pnpm
 - iOS Simulator / Android Emulator or a physical device (biometrics work best on device or supported simulators)
 
+## Supported SDK
+
+This project targets Expo SDK 52 only. The code, native modules, and build configuration are aligned with SDK 52; using a different Expo SDK may cause runtime or build incompatibilities.
+
+If you need to upgrade the Expo SDK, follow Expo's official upgrade guide and test the app thoroughly.
+
+## System specifications & minimum requirements
+
+These are the minimum recommended specs for local development and running simulators/emulators. Real devices are recommended for biometric testing.
+
+- macOS (for iOS development): macOS Monterey (12) or later. Xcode 14+ required for simulator and development builds.
+- Windows / Linux (for Android development): Windows 10+ or a recent Ubuntu (20.04+) distribution.
+- CPU: 64-bit, 4 cores (quad-core) or better.
+- RAM: 8 GB minimum; 16 GB recommended for smooth emulators and toolchain.
+- Disk: 5 GB free space for project and node modules; more required for emulators and native toolchains.
+- Java: JDK 11+ for Android builds.
+- Android: Android Studio with Android SDK (API level 31+) and emulator images.
+
+Notes:
+- Biometric authentication is best tested on physical devices; some simulators/emulators have limited or simulated biometric support.
+- For iOS face/biometric testing you may need a development build (Expo dev client) rather than Expo Go.
+
+## Install Node & npm (macOS)
+
+Recommended: use `nvm` to manage Node versions (keeps global packages isolated and makes upgrades simple).
+
+```bash
+# Install nvm (if you don't have it)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+# Restart your shell, then install the latest LTS Node
+nvm install --lts
+nvm use --lts
+# Verify
+node -v
+npm -v
+```
+
+Alternative via Homebrew:
+
+```bash
+brew install node
+node -v
+npm -v
+```
+
+Note: `npm` is bundled with Node—no separate install is required.
+
+## Install Expo tooling
+
+You can use `npx`/`npm`/`yarn` without installing the CLI globally, or install the Expo CLI globally for convenience.
+
+Using `npx` (no global install required):
+
+```bash
+npx expo start
+```
+
+Global install (optional):
+
+```bash
+npm install --global expo-cli
+# or with yarn
+yarn global add expo-cli
+# Verify
+expo --version
+```
+
+For development builds (recommended for full biometric support on iOS) you may also install `eas-cli`:
+
+```bash
+npm install -g eas-cli
+```
+
 ## Setup
 
 ```bash
 cd secured-todo-app
 npm install
+```
+
+### Alternative: Install with Yarn
+
+```bash
+cd secured-todo-app
+yarn install
+```
+
+### Install Expo CLI (optional)
+
+If you prefer the global Expo CLI (not required):
+
+```bash
+npm install --global expo-cli
+# or
+yarn global add expo-cli
 ```
 
 ## Run
@@ -31,6 +121,33 @@ npm start
 
 Then press `i` for iOS or `a` for Android.  
 **Note:** Biometric auth (e.g. Face ID) may require a **development build** on iOS; Expo Go has limitations. For full biometric testing, use a dev build: `npx expo prebuild` then run the native app.
+
+### Run with Expo (recommended)
+
+Start the Metro bundler using the npm script, then open the app with Expo Go or a development build:
+
+```bash
+npm start
+# then in the Expo CLI choose to run on a simulator or scan the QR code with Expo Go
+```
+
+To run on a device or simulator directly:
+
+```bash
+# iOS simulator
+npm run ios
+
+# Android emulator
+npm run android
+```
+
+If you used Yarn:
+
+```bash
+yarn start
+yarn ios
+yarn android
+```
 
 ## Tests
 
